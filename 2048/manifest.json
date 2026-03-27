@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "2048 Game",
+  "version": "1.0",
+  "description": "The classic 2048 sliding puzzle game — part of Elvic Groups Game Hubs.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": []
+}

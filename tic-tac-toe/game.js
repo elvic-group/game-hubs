@@ -126,8 +126,8 @@ document.getElementById('infoCloseBtn').addEventListener('click', () => {
 });
 
 // "Back to Game Hubs" button listener
-document.getElementById('backToHubsBtn').addEventListener('click', () => {
-  if (typeof chrome !== 'undefined' && chrome.runtime) {
+document.getElementById('backToHubsBtn').addEventListener('click', function() {
+  if (typeof chrome !== 'undefined' && chrome.runtime && typeof chrome.runtime.getURL === 'function') {
     window.location.href = chrome.runtime.getURL('index.html');
   } else {
     window.location.href = '../index.html';

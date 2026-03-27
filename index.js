@@ -220,3 +220,216 @@ animBg();
   setInterval(() => { tick(); draw(); }, 20);
   draw();
 })();
+
+// Tetris preview
+(() => {
+  const cv = document.getElementById('previewTetris');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  cv.width = 300; cv.height = 160;
+  const g = 12, cols = 10, rows = 13;
+  const ox = (300 - cols * g) / 2, oy = 2;
+  const colors = ['#e94560','#4a90d9','#ffd700','#00ff88','#ff69b4','#00bfff','#ff8c00'];
+  let grid = Array.from({length: rows}, () => Array(cols).fill(0));
+  let tick = 0;
+
+  function draw() {
+    ctx.fillStyle = '#0f1123';
+    ctx.fillRect(0, 0, 300, 160);
+    // Fill some bottom rows randomly
+    tick++;
+    if (tick % 15 === 0) {
+      for (let c = 0; c < cols; c++) {
+        if (Math.random() < 0.6) grid[rows-1][c] = Math.floor(Math.random()*7)+1;
+      }
+      // Shift rows up
+      for (let r = 0; r < rows-1; r++) grid[r] = grid[r+1].slice();
+      grid[rows-1] = Array(cols).fill(0);
+    }
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      if (grid[r][c]) {
+        ctx.fillStyle = colors[grid[r][c]-1];
+        ctx.fillRect(ox + c*g+1, oy + r*g+1, g-2, g-2);
+      }
+    }
+    // Falling piece
+    const px = Math.floor(cols/2)-1, py = (tick % 12);
+    ctx.fillStyle = '#e94560';
+    ctx.fillRect(ox+px*g+1, oy+py*g+1, g-2, g-2);
+    ctx.fillRect(ox+(px+1)*g+1, oy+py*g+1, g-2, g-2);
+    ctx.fillRect(ox+px*g+1, oy+(py+1)*g+1, g-2, g-2);
+    ctx.fillRect(ox+(px+1)*g+1, oy+(py+1)*g+1, g-2, g-2);
+  }
+  setInterval(draw, 80);
+  draw();
+})();
+
+// Breakout preview
+(() => {
+  const cv = document.getElementById('previewBreakout');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  cv.width = 300; cv.height = 160;
+  let bx = 150, by = 120, bvx = 2.2, bvy = -2.2;
+  let px = 130;
+  const pw = 50, ph = 6;
+  const bricks = [];
+  const colors = ['#e94560','#ff8c00','#ffd700','#00ff88','#4a90d9'];
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 8; c++) {
+    bricks.push({x: 10+c*35, y: 10+r*14, w: 32, h: 10, alive: true, color: colors[r]});
+  }
+
+  function draw() {
+    bx += bvx; by += bvy;
+    if (bx < 4 || bx > 296) bvx *= -1;
+    if (by < 4) bvy *= -1;
+    if (by > 150) { bvy = -Math.abs(bvy); by = 120; }
+    px += (bx - px - pw/2) * 0.1;
+    // Brick collision
+    bricks.forEach(b => {
+      if (b.alive && bx > b.x && bx < b.x+b.w && by > b.y && by < b.y+b.h) {
+        b.alive = false; bvy *= -1;
+        setTimeout(() => b.alive = true, 3000);
+      }
+    });
+    ctx.fillStyle = '#0f1123';
+    ctx.fillRect(0, 0, 300, 160);
+    bricks.forEach(b => { if (b.alive) { ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.w, b.h); }});
+    ctx.fillStyle = '#e94560';
+    ctx.fillRect(px, 148, pw, ph);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(bx, by, 4, 0, Math.PI*2); ctx.fill();
+  }
+  setInterval(draw, 20);
+  draw();
+})();
+
+// Flappy Bird preview
+(() => {
+  const cv = document.getElementById('previewFlappy');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  cv.width = 300; cv.height = 160;
+  let by = 80, bvy = 0;
+  let pipes = [{x: 200, gap: 60}, {x: 350, gap: 70}];
+  let tick = 0;
+
+  function draw() {
+    tick++;
+    bvy += 0.3;
+    by += bvy;
+    if (by > 140 || by < 10) { by = 80; bvy = -3; }
+    if (tick % 40 === 0) bvy = -4;
+
+    pipes.forEach(p => { p.x -= 1.5; if (p.x < -30) { p.x = 320; p.gap = 50 + Math.random()*40; }});
+
+    ctx.fillStyle = '#0f1123';
+    ctx.fillRect(0, 0, 300, 160);
+    // Pipes
+    pipes.forEach(p => {
+      const gapY = 50 + Math.sin(p.x*0.01)*30;
+      ctx.fillStyle = '#00ff88';
+      ctx.fillRect(p.x, 0, 24, gapY);
+      ctx.fillRect(p.x, gapY + p.gap, 24, 160);
+    });
+    // Bird
+    ctx.fillStyle = '#e94560';
+    ctx.beginPath(); ctx.arc(60, by, 8, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(63, by-2, 2, 0, Math.PI*2); ctx.fill();
+  }
+  setInterval(draw, 25);
+  draw();
+})();
+
+// 2048 preview
+(() => {
+  const cv = document.getElementById('preview2048');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  cv.width = 300; cv.height = 160;
+  const vals = [0,2,4,8,16,32,64,128,256,512,1024,2048];
+  const tileColors = {0:'#1a1a2e',2:'#2a2040',4:'#352850',8:'#e94560',16:'#d63851',32:'#c62b42',64:'#b51e33',128:'#4a90d9',256:'#3d7ec4',512:'#3070b0',1024:'#ffd700',2048:'#ffec8b'};
+  let grid = Array(16).fill(0);
+  grid[5]=2; grid[6]=4; grid[9]=8; grid[10]=16; grid[13]=64; grid[14]=128; grid[15]=256;
+  let tick = 0;
+
+  function draw() {
+    tick++;
+    if (tick % 30 === 0) {
+      const empty = grid.map((v,i) => v===0?i:-1).filter(i=>i>=0);
+      if (empty.length) grid[empty[Math.floor(Math.random()*empty.length)]] = vals[Math.floor(Math.random()*5)+1];
+    }
+    if (tick % 60 === 0) { grid = Array(16).fill(0); }
+
+    ctx.fillStyle = '#0f1123';
+    ctx.fillRect(0, 0, 300, 160);
+    const sz = 32, gap = 4, ox = (300-4*(sz+gap))/2, oy = 8;
+    for (let i = 0; i < 16; i++) {
+      const r = Math.floor(i/4), c = i%4;
+      const v = grid[i];
+      ctx.fillStyle = tileColors[v] || '#e94560';
+      ctx.fillRect(ox+c*(sz+gap), oy+r*(sz+gap), sz, sz);
+      if (v > 0) {
+        ctx.fillStyle = v >= 8 ? '#fff' : '#aaa';
+        ctx.font = (v >= 1024 ? '8' : v >= 100 ? '10' : '12') + 'px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, ox+c*(sz+gap)+sz/2, oy+r*(sz+gap)+sz/2+4);
+      }
+    }
+  }
+  setInterval(draw, 60);
+  draw();
+})();
+
+// Minesweeper preview
+(() => {
+  const cv = document.getElementById('previewMines');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  cv.width = 300; cv.height = 160;
+  const sz = 16, cols = 9, rows = 9;
+  const ox = (300-cols*sz)/2, oy = (160-rows*sz)/2;
+  let grid = Array(cols*rows).fill(-1); // -1 = hidden
+  let tick = 0;
+  const numColors = ['','#4a90d9','#00ff88','#e94560','#9b59b6','#ff8c00','#00bcd4','#fff','#888'];
+
+  function draw() {
+    tick++;
+    if (tick % 10 === 0) {
+      const hidden = grid.map((v,i) => v===-1?i:-1).filter(i=>i>=0);
+      if (hidden.length) {
+        const idx = hidden[Math.floor(Math.random()*hidden.length)];
+        grid[idx] = Math.random() < 0.15 ? 9 : Math.floor(Math.random()*4); // 9=mine
+      }
+    }
+    if (tick % 80 === 0) grid = Array(cols*rows).fill(-1);
+
+    ctx.fillStyle = '#0f1123';
+    ctx.fillRect(0, 0, 300, 160);
+    for (let i = 0; i < cols*rows; i++) {
+      const c = i%cols, r = Math.floor(i/cols);
+      const x = ox+c*sz, y = oy+r*sz;
+      if (grid[i] === -1) {
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(x+1, y+1, sz-2, sz-2);
+      } else if (grid[i] === 9) {
+        ctx.fillStyle = '#e94560';
+        ctx.fillRect(x+1, y+1, sz-2, sz-2);
+        ctx.fillStyle = '#0f1123';
+        ctx.beginPath(); ctx.arc(x+sz/2, y+sz/2, 3, 0, Math.PI*2); ctx.fill();
+      } else {
+        ctx.fillStyle = '#0f1123';
+        ctx.fillRect(x+1, y+1, sz-2, sz-2);
+        if (grid[i] > 0) {
+          ctx.fillStyle = numColors[grid[i]];
+          ctx.font = '10px Segoe UI';
+          ctx.textAlign = 'center';
+          ctx.fillText(grid[i], x+sz/2, y+sz/2+4);
+        }
+      }
+    }
+  }
+  setInterval(draw, 50);
+  draw();
+})();

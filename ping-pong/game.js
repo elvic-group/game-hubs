@@ -113,9 +113,9 @@ document.getElementById('infoCloseBtn').addEventListener('click', () => {
   menuEl.style.display = 'flex';
 });
 
-// Back to Game Hubs button (replaces inline onclick)
-document.getElementById('backToHubBtn').addEventListener('click', () => {
-  if (typeof chrome !== 'undefined' && chrome.runtime) {
+// Back to Game Hubs button
+document.getElementById('backToHubBtn').addEventListener('click', function() {
+  if (typeof chrome !== 'undefined' && chrome.runtime && typeof chrome.runtime.getURL === 'function') {
     window.location.href = chrome.runtime.getURL('index.html');
   } else {
     window.location.href = '../index.html';
