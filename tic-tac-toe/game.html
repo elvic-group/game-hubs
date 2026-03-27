@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic-Tac-Toe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+  body { background: #0a0a1a; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Segoe UI', sans-serif; flex-direction: column; overflow: hidden; }
+
+  /* ===== MENU ===== */
+  #menu { position: absolute; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  #menu h1 { color: #e94560; font-size: 42px; text-shadow: 0 0 30px rgba(233,69,96,0.6); letter-spacing: 4px; }
+  #menu .subtitle { color: #666; font-size: 14px; margin-top: -8px; }
+
+  .btn { background: transparent; border: 2px solid #e94560; color: #e94560; padding: 12px 32px; font-size: 16px; cursor: pointer; border-radius: 4px; transition: all 0.2s; font-family: inherit; min-width: 200px; text-align: center; }
+  .btn:hover { background: #e94560; color: #fff; box-shadow: 0 0 20px rgba(233,69,96,0.4); }
+  .btn.small { padding: 8px 16px; font-size: 13px; min-width: auto; }
+
+  .mode-row { display: flex; gap: 8px; }
+  .mode-btn { background: transparent; border: 2px solid #333; color: #666; padding: 8px 20px; font-size: 13px; cursor: pointer; border-radius: 4px; transition: all 0.2s; font-family: inherit; }
+  .mode-btn.active { border-color: #e94560; color: #e94560; }
+  .mode-btn:hover { border-color: #e94560; color: #e94560; }
+
+  .option-row { display: flex; align-items: center; gap: 12px; color: #888; font-size: 14px; }
+  .toggle { width: 44px; height: 24px; background: #333; border-radius: 12px; cursor: pointer; position: relative; transition: background 0.2s; }
+  .toggle.on { background: #e94560; }
+  .toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: left 0.2s; }
+  .toggle.on::after { left: 23px; }
+
+  /* ===== HUD ===== */
+  #hud { position: absolute; top: 20px; display: flex; gap: 40px; z-index: 5; pointer-events: none; }
+  .hud-item { color: #e94560; font-size: 18px; text-shadow: 0 0 10px rgba(233,69,96,0.3); }
+  .hud-item span { color: #fff; }
+  .hud-item.p2 { color: #0f3460; }
+  .hud-item.p2 span { color: #4a90d9; }
+
+  /* ===== BOARD ===== */
+  #gameArea { display: none; flex-direction: column; align-items: center; gap: 20px; }
+  #turnIndicator { color: #888; font-size: 16px; height: 24px; }
+  #turnIndicator .x-color { color: #e94560; }
+  #turnIndicator .o-color { color: #4a90d9; }
+
+  #board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .cell {
+    width: 110px; height: 110px; background: #0f1123; border: 2px solid rgba(233,69,96,0.15);
+    border-radius: 6px; cursor: pointer; position: relative; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cell:hover { background: #141633; border-color: rgba(233,69,96,0.3); }
+  .cell.disabled { cursor: default; }
+  .cell.win-cell { border-color: rgba(233,69,96,0.8); box-shadow: 0 0 20px rgba(233,69,96,0.3); }
+
+  /* X and O marks */
+  .cell .mark { font-size: 0; line-height: 0; }
+  .cell canvas { position: absolute; top: 0; left: 0; }
+
+  /* ===== RESULT OVERLAY ===== */
+  #resultOverlay { position: absolute; z-index: 8; display: none; flex-direction: column; align-items: center; gap: 12px; }
+  #resultOverlay h2 { font-size: 38px; text-shadow: 0 0 30px rgba(233,69,96,0.6); }
+  #resultOverlay h2.x-win { color: #e94560; }
+  #resultOverlay h2.o-win { color: #4a90d9; }
+  #resultOverlay h2.draw { color: #888; }
+  #resultOverlay .result-sub { color: #aaa; font-size: 16px; }
+
+  /* ===== INFO ===== */
+  #infoOverlay { position: fixed; z-index: 12; display: none; flex-direction: column; align-items: center; background: rgba(10,10,26,0.97); width: 100%; height: 100%; top: 0; left: 0; overflow-y: auto; padding: 30px 20px; -webkit-overflow-scrolling: touch; }
+  #infoContent { max-width: 480px; width: 100%; padding-bottom: 40px; }
+  #infoContent h2 { color: #e94560; font-size: 28px; margin-bottom: 20px; text-shadow: 0 0 20px rgba(233,69,96,0.4); text-align: center; }
+  #infoContent h3 { color: #e94560; font-size: 16px; margin: 18px 0 8px; border-bottom: 1px solid rgba(233,69,96,0.2); padding-bottom: 4px; }
+  #infoContent p, #infoContent li { color: #aaa; font-size: 13px; line-height: 1.6; }
+  #infoContent ul { padding-left: 18px; margin: 4px 0; }
+  #infoContent li { margin: 3px 0; }
+  #infoContent .section { margin-bottom: 6px; }
+  #infoContent .footer { text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(233,69,96,0.15); }
+  #infoContent .footer .copyright { color: #e94560; font-size: 14px; font-weight: bold; }
+  #infoContent .footer .version { color: #555; font-size: 11px; margin-top: 4px; }
+
+  /* ===== PARTICLES ===== */
+  #particleCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6; }
+
+  @media (max-width: 420px) {
+    .cell { width: 85px; height: 85px; }
+    #menu h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MENU -->
+<div id="menu">
+  <h1>TIC-TAC-TOE</h1>
+  <div class="subtitle">A classic reimagined</div>
+
+  <div style="margin-top: 8px;">
+    <div style="color: #666; font-size: 13px; margin-bottom: 6px; text-align: center;">MODE</div>
+    <div class="mode-row">
+      <button class="mode-btn active" data-mode="ai">vs AI</button>
+      <button class="mode-btn" data-mode="local">2 Players</button>
+    </div>
+  </div>
+
+  <div id="difficultySection" style="margin-top: 4px;">
+    <div style="color: #666; font-size: 13px; margin-bottom: 6px; text-align: center;">AI DIFFICULTY</div>
+    <div class="mode-row">
+      <button class="mode-btn diff-btn" data-diff="easy">Easy</button>
+      <button class="mode-btn diff-btn active" data-diff="normal">Normal</button>
+      <button class="mode-btn diff-btn" data-diff="hard">Hard</button>
+    </div>
+  </div>
+
+  <div class="option-row">
+    <span>Sound</span>
+    <div class="toggle on" id="soundToggle"></div>
+  </div>
+
+  <button class="btn" id="startBtn">PLAY</button>
+  <button class="btn small" id="infoBtn">Info & Settings</button>
+  <button class="btn small" id="backToHubsBtn" style="border-color:#4a90d9; color:#4a90d9;">Back to Game Hubs</button>
+
+  <div style="display: flex; gap: 24px; color: #444; font-size: 12px; margin-top: 4px;">
+    <span>X Wins: <span id="menuXWins" style="color:#e94560">0</span></span>
+    <span>O Wins: <span id="menuOWins" style="color:#4a90d9">0</span></span>
+    <span>Draws: <span id="menuDraws" style="color:#888">0</span></span>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud" style="display: none;">
+  <div class="hud-item">X: <span id="xScore">0</span></div>
+  <div class="hud-item" style="color: #888;">Draws: <span id="drawScore">0</span></div>
+  <div class="hud-item p2">O: <span id="oScore">0</span></div>
+</div>
+
+<!-- GAME AREA -->
+<div id="gameArea">
+  <div id="turnIndicator"></div>
+  <div id="board"></div>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div id="resultOverlay">
+  <h2 id="resultTitle"></h2>
+  <div class="result-sub" id="resultSub"></div>
+  <div style="background:#0f1123; border:1px solid rgba(233,69,96,0.1); border-radius:6px; padding:10px 20px; margin:6px 0; text-align:center; position:relative; min-width:280px;">
+    <span style="position:absolute; top:2px; right:6px; font-size:8px; color:#444; letter-spacing:1px;">AD</span>
+    <span style="color:#666; font-size:12px;">Your ad here — Advertise with Elvic Groups</span>
+  </div>
+  <button class="btn" id="playAgainBtn">PLAY AGAIN</button>
+  <button class="btn small" id="backMenuBtn">Menu</button>
+</div>
+
+<!-- INFO OVERLAY -->
+<div id="infoOverlay">
+  <div id="infoContent">
+    <h2>TIC-TAC-TOE</h2>
+
+    <div class="section">
+      <h3>How to Play</h3>
+      <p>Take turns placing your mark (X or O) on the 3x3 grid. The first player to get three in a row — horizontally, vertically, or diagonally — wins. If all 9 cells are filled with no winner, it's a draw.</p>
+    </div>
+
+    <div class="section">
+      <h3>Game Modes</h3>
+      <ul>
+        <li><strong>vs AI</strong> — Play against the computer. You are X, AI is O.</li>
+        <li><strong>2 Players</strong> — Play locally with a friend. Take turns on the same screen.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>AI Difficulty</h3>
+      <ul>
+        <li><strong>Easy</strong> — AI makes random moves</li>
+        <li><strong>Normal</strong> — AI blocks your wins and takes obvious opportunities, but sometimes makes mistakes</li>
+        <li><strong>Hard</strong> — AI plays optimally using minimax (unbeatable)</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Controls</h3>
+      <ul>
+        <li>Click or tap any empty cell to place your mark</li>
+        <li>Scores are tracked across rounds within a session</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Privacy</h3>
+      <p>This game runs entirely in your browser. No data is collected, transmitted, or shared with any third party. Win/loss stats are stored only in session memory and reset when you close the page. No cookies, analytics, tracking, or network requests are used.</p>
+    </div>
+
+    <div class="footer">
+      <div class="copyright">Elvic Groups</div>
+      <p style="color:#888; font-size: 12px; margin-top: 6px;">All rights reserved.</p>
+      <div class="version">Tic-Tac-Toe v1.0 — Built with HTML5 Canvas & Web Audio API</div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="btn small" id="infoCloseBtn">Back to Menu</button>
+    </div>
+  </div>
+</div>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="particleCanvas"></canvas>
+
+<script src="game.js"></script>
+</body>
+</html>

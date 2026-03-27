@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Hubs — Elvic Groups</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+  body { background: #0a0a1a; min-height: 100vh; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+
+  /* HEADER */
+  header { text-align: center; padding: 50px 20px 30px; }
+  header h1 { color: #e94560; font-size: 48px; letter-spacing: 6px; text-shadow: 0 0 30px rgba(233,69,96,0.6); }
+  header .subtitle { color: #666; font-size: 14px; margin-top: 6px; letter-spacing: 2px; }
+
+  /* GAME GRID */
+  .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 900px; width: 100%; padding: 20px 30px 60px; }
+
+  /* GAME CARD */
+  .game-card {
+    background: #0f1123;
+    border: 2px solid rgba(233,69,96,0.15);
+    border-radius: 8px;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+  }
+  .game-card:hover {
+    border-color: #e94560;
+    box-shadow: 0 0 30px rgba(233,69,96,0.2);
+    transform: translateY(-4px);
+  }
+
+  .card-preview {
+    width: 100%;
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-preview canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+  .card-body { padding: 20px; }
+  .card-body h2 { color: #e94560; font-size: 22px; letter-spacing: 2px; margin-bottom: 6px; }
+  .card-body p { color: #888; font-size: 13px; line-height: 1.5; }
+
+  .card-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .tag { background: rgba(233,69,96,0.1); border: 1px solid rgba(233,69,96,0.2); color: #e94560; padding: 3px 10px; border-radius: 12px; font-size: 11px; }
+
+  .play-btn {
+    display: inline-block; margin-top: 14px;
+    background: transparent; border: 2px solid #e94560; color: #e94560;
+    padding: 8px 28px; font-size: 14px; cursor: pointer; border-radius: 4px;
+    transition: all 0.2s; font-family: inherit;
+  }
+  .play-btn:hover { background: #e94560; color: #fff; box-shadow: 0 0 15px rgba(233,69,96,0.4); }
+
+  /* AD BANNER */
+  .ad-banner { max-width: 900px; width: 100%; padding: 0 30px; position: relative; z-index: 1; }
+  .ad-container { background: #0f1123; border: 1px solid rgba(233,69,96,0.1); border-radius: 6px; padding: 12px; text-align: center; position: relative; }
+  .ad-container .ad-label { position: absolute; top: 4px; right: 8px; font-size: 9px; color: #444; letter-spacing: 1px; }
+  .ad-container .ad-content { color: #666; font-size: 13px; min-height: 60px; display: flex; align-items: center; justify-content: center; }
+  .ad-container .ad-content a { color: #e94560; text-decoration: none; }
+  .ad-container .ad-content a:hover { text-decoration: underline; }
+
+  /* SECTION TITLES */
+  .section-title { color: #e94560; font-size: 22px; letter-spacing: 3px; text-align: center; margin: 30px 0 16px; position: relative; z-index: 1; text-shadow: 0 0 20px rgba(233,69,96,0.3); }
+
+  /* SUPPORT SECTION */
+  .support-section { max-width: 900px; width: 100%; padding: 20px 30px; position: relative; z-index: 1; }
+  .support-cards { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .support-card {
+    background: #0f1123; border: 2px solid rgba(233,69,96,0.12); border-radius: 8px;
+    padding: 20px 24px; text-align: center; flex: 1; min-width: 200px; max-width: 280px; transition: all 0.3s;
+  }
+  .support-card:hover { border-color: rgba(233,69,96,0.4); transform: translateY(-2px); }
+  .support-card h3 { color: #e94560; font-size: 16px; margin-bottom: 6px; }
+  .support-card p { color: #888; font-size: 12px; line-height: 1.5; margin-bottom: 12px; }
+  .support-btn {
+    display: inline-block; background: transparent; border: 2px solid; padding: 8px 22px;
+    font-size: 13px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.2s; text-decoration: none;
+  }
+  .support-btn.kofi { border-color: #ff5e5b; color: #ff5e5b; }
+  .support-btn.kofi:hover { background: #ff5e5b; color: #fff; }
+  .support-btn.bmc { border-color: #ffdd00; color: #ffdd00; }
+  .support-btn.bmc:hover { background: #ffdd00; color: #000; }
+
+  /* SPONSOR SECTION */
+  .sponsor-section { max-width: 900px; width: 100%; padding: 10px 30px 20px; position: relative; z-index: 1; text-align: center; }
+  .sponsor-banner {
+    background: linear-gradient(135deg, #0f1123 0%, #141633 100%);
+    border: 1px solid rgba(233,69,96,0.1); border-radius: 8px;
+    padding: 20px; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;
+  }
+  .sponsor-banner .sponsor-label { color: #555; font-size: 11px; letter-spacing: 2px; }
+  .sponsor-banner .sponsor-name { color: #888; font-size: 16px; font-weight: bold; letter-spacing: 1px; }
+  .sponsor-banner .sponsor-cta {
+    background: transparent; border: 1px solid #4a90d9; color: #4a90d9;
+    padding: 6px 16px; font-size: 12px; border-radius: 3px; cursor: pointer; font-family: inherit; transition: all 0.2s; text-decoration: none;
+  }
+  .sponsor-banner .sponsor-cta:hover { background: #4a90d9; color: #fff; }
+
+  /* FOOTER */
+  footer { padding: 30px; text-align: center; border-top: 1px solid rgba(233,69,96,0.1); width: 100%; max-width: 900px; margin-top: auto; }
+  footer .copyright { color: #e94560; font-size: 14px; font-weight: bold; }
+  footer .rights { color: #888; font-size: 12px; margin-top: 4px; }
+  footer .version { color: #444; font-size: 11px; margin-top: 4px; }
+
+  /* PARTICLES BG */
+  #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  header, .games-grid, footer { position: relative; z-index: 1; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 32px; }
+    .games-grid { grid-template-columns: 1fr; padding: 16px; }
+    .support-cards { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<header>
+  <h1>GAME HUBS</h1>
+  <div class="subtitle">by Elvic Groups</div>
+</header>
+
+<div class="games-grid">
+
+  <!-- SNAKE -->
+  <div class="game-card" data-game="snake/game.html">
+    <div class="card-preview"><canvas id="previewSnake"></canvas></div>
+    <div class="card-body">
+      <h2>SNAKE</h2>
+      <p>Guide the snake, eat food, grow longer. Avoid walls and your own tail. How long can you survive?</p>
+      <div class="card-tags">
+        <span class="tag">Single Player</span>
+        <span class="tag">Arcade</span>
+        <span class="tag">3 Difficulties</span>
+      </div>
+      <button class="play-btn">PLAY</button>
+    </div>
+  </div>
+
+  <!-- TIC-TAC-TOE -->
+  <div class="game-card" data-game="tic-tac-toe/game.html">
+    <div class="card-preview"><canvas id="previewTTT"></canvas></div>
+    <div class="card-body">
+      <h2>TIC-TAC-TOE</h2>
+      <p>Classic X vs O. Play against an AI opponent or challenge a friend in local 2-player mode.</p>
+      <div class="card-tags">
+        <span class="tag">1-2 Players</span>
+        <span class="tag">Strategy</span>
+        <span class="tag">AI Opponent</span>
+      </div>
+      <button class="play-btn">PLAY</button>
+    </div>
+  </div>
+
+  <!-- PING PONG -->
+  <div class="game-card" data-game="ping-pong/game.html">
+    <div class="card-preview"><canvas id="previewPong"></canvas></div>
+    <div class="card-body">
+      <h2>PING PONG</h2>
+      <p>Fast-paced paddle action. Rally the ball past your opponent. First to the winning score takes the match.</p>
+      <div class="card-tags">
+        <span class="tag">1-2 Players</span>
+        <span class="tag">Arcade</span>
+        <span class="tag">3 Difficulties</span>
+      </div>
+      <button class="play-btn">PLAY</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- AD BANNER -->
+<div class="ad-banner">
+  <div class="ad-container" id="adBanner">
+    <span class="ad-label">AD</span>
+    <div class="ad-content" id="adContent">
+      <!-- Replace this div's content with your ad network code (e.g. Google AdSense) -->
+      <span>Your ad here — <a href="https://mail.google.com/mail/?view=cm&to=elvickongolo@gmail.com&su=Advertising+Inquiry+-+Game+Hubs&body=Hi+Elvic+Groups,%0A%0AI'm+interested+in+advertising+on+Game+Hubs.%0A%0ABrand+Name:+%0AWebsite:+%0ABudget:+%0A%0AThanks!" target="_blank" rel="noopener" id="adInquiry">Advertise with Elvic Groups</a></span>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT US -->
+<div class="section-title">SUPPORT US</div>
+<div class="support-section">
+  <div class="support-cards">
+    <div class="support-card">
+      <h3>Ko-fi</h3>
+      <p>Buy us a coffee and help us keep making free games!</p>
+      <a class="support-btn kofi" href="https://ko-fi.com/elvicgroups" target="_blank" rel="noopener">Support on Ko-fi</a>
+    </div>
+  </div>
+</div>
+
+<!-- SPONSOR -->
+<div class="sponsor-section">
+  <div class="sponsor-banner">
+    <span class="sponsor-label">POWERED BY</span>
+    <span class="sponsor-name" id="sponsorName">Your Brand Here</span>
+    <a class="sponsor-cta" href="sponsor.html" id="sponsorLink">Become a Sponsor</a>
+  </div>
+</div>
+
+<footer>
+  <div class="copyright">Elvic Groups</div>
+  <div class="rights">All rights reserved.</div>
+  <div style="margin-top: 10px; display: flex; gap: 16px; justify-content: center;">
+    <a href="terms.html" class="legal-link" id="termsLink" style="color:#666; font-size:12px; text-decoration:none;">Terms & Conditions</a>
+    <a href="privacy.html" class="legal-link" id="privacyLink" style="color:#666; font-size:12px; text-decoration:none;">Privacy Policy</a>
+  </div>
+  <div class="version">Game Hubs v1.0</div>
+</footer>
+
+<script src="index.js"></script>
+</body>
+</html>

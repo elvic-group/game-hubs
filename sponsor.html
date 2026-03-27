@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Become a Sponsor — Game Hubs by Elvic Groups</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a1a; min-height: 100vh; font-family: 'Segoe UI', sans-serif; color: #aaa; display: flex; flex-direction: column; align-items: center; }
+
+  header { text-align: center; padding: 50px 20px 20px; }
+  header h1 { color: #e94560; font-size: 36px; letter-spacing: 4px; text-shadow: 0 0 30px rgba(233,69,96,0.5); }
+  header .subtitle { color: #666; font-size: 14px; margin-top: 6px; }
+
+  .content { max-width: 720px; width: 100%; padding: 20px 30px 60px; }
+
+  h2 { color: #e94560; font-size: 22px; margin: 30px 0 12px; letter-spacing: 1px; }
+  h3 { color: #e94560; font-size: 16px; margin: 20px 0 8px; }
+  p { font-size: 14px; line-height: 1.7; margin-bottom: 12px; }
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  li { font-size: 14px; line-height: 1.7; margin-bottom: 4px; }
+  strong { color: #ddd; }
+
+  /* WHO WE ARE */
+  .about-box {
+    background: #0f1123; border: 1px solid rgba(233,69,96,0.15); border-radius: 8px;
+    padding: 24px; margin: 16px 0;
+  }
+
+  /* STATS */
+  .stats-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; }
+  .stat-card {
+    background: #0f1123; border: 1px solid rgba(233,69,96,0.15); border-radius: 8px;
+    padding: 20px; flex: 1; min-width: 140px; text-align: center;
+  }
+  .stat-card .number { color: #e94560; font-size: 28px; font-weight: bold; }
+  .stat-card .label { color: #666; font-size: 12px; margin-top: 4px; }
+
+  /* PRICING TIERS */
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+  .tier {
+    background: #0f1123; border: 2px solid rgba(233,69,96,0.15); border-radius: 8px;
+    padding: 24px 20px; text-align: center; transition: all 0.3s;
+  }
+  .tier:hover { border-color: rgba(233,69,96,0.4); transform: translateY(-2px); }
+  .tier.popular { border-color: #e94560; position: relative; }
+  .tier.popular::after {
+    content: 'MOST POPULAR'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+    background: #e94560; color: #fff; font-size: 10px; padding: 2px 10px; border-radius: 10px; letter-spacing: 1px;
+  }
+  .tier .tier-name { color: #e94560; font-size: 18px; font-weight: bold; margin-bottom: 4px; }
+  .tier .tier-price { color: #ffd700; font-size: 24px; font-weight: bold; margin: 8px 0; }
+  .tier .tier-price span { color: #666; font-size: 13px; font-weight: normal; }
+  .tier .tier-duration { color: #888; font-size: 13px; margin-bottom: 12px; }
+  .tier ul { text-align: left; padding-left: 16px; }
+  .tier li { color: #aaa; font-size: 13px; margin-bottom: 4px; }
+  .tier li::marker { color: #e94560; }
+  .tier-btn {
+    display: inline-block; margin-top: 14px; background: transparent; border: 2px solid #e94560; color: #e94560;
+    padding: 8px 22px; font-size: 13px; cursor: pointer; border-radius: 4px; transition: all 0.2s;
+    font-family: inherit; text-decoration: none;
+  }
+  .tier-btn:hover { background: #e94560; color: #fff; box-shadow: 0 0 15px rgba(233,69,96,0.4); }
+  .tier.popular .tier-btn { border-color: #ffd700; color: #ffd700; }
+  .tier.popular .tier-btn:hover { background: #ffd700; color: #000; }
+
+  /* PLACEMENT MAP */
+  .placement { background: #0f1123; border: 1px solid rgba(233,69,96,0.15); border-radius: 8px; padding: 24px; margin: 16px 0; }
+  .placement-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+  .placement-item:last-child { margin-bottom: 0; }
+  .placement-icon { color: #e94560; font-size: 18px; min-width: 24px; text-align: center; padding-top: 2px; }
+  .placement-text strong { color: #ddd; display: block; font-size: 14px; margin-bottom: 2px; }
+  .placement-text span { color: #888; font-size: 13px; }
+
+  /* CTA */
+  .cta-section { text-align: center; margin: 40px 0 20px; padding: 30px; background: #0f1123; border: 2px solid rgba(233,69,96,0.2); border-radius: 8px; }
+  .cta-section h2 { margin-top: 0; }
+  .cta-section p { color: #888; }
+
+  .btn {
+    display: inline-block; background: transparent; border: 2px solid #e94560; color: #e94560;
+    padding: 14px 36px; font-size: 16px; cursor: pointer; border-radius: 4px;
+    transition: all 0.2s; font-family: inherit; text-decoration: none; margin: 8px;
+  }
+  .btn:hover { background: #e94560; color: #fff; box-shadow: 0 0 20px rgba(233,69,96,0.4); }
+  .btn.secondary { border-color: #4a90d9; color: #4a90d9; font-size: 14px; padding: 10px 24px; }
+  .btn.secondary:hover { background: #4a90d9; color: #fff; box-shadow: 0 0 15px rgba(74,144,217,0.3); }
+
+  .email-display { color: #e94560; font-size: 16px; margin: 12px 0; }
+
+  /* FAQ */
+  .faq-item { margin-bottom: 16px; }
+  .faq-item strong { color: #ddd; font-size: 14px; display: block; margin-bottom: 4px; }
+  .faq-item p { margin-bottom: 0; font-size: 13px; }
+
+  /* BACK LINK */
+  .back-link {
+    color: #4a90d9; font-size: 13px; text-decoration: none; margin-bottom: 10px;
+    display: inline-block; transition: color 0.2s;
+  }
+  .back-link:hover { color: #6ab0ff; }
+
+  footer { padding: 30px; text-align: center; border-top: 1px solid rgba(233,69,96,0.1); width: 100%; max-width: 720px; margin-top: auto; }
+  footer .copyright { color: #e94560; font-size: 14px; font-weight: bold; }
+  footer .rights { color: #888; font-size: 12px; margin-top: 4px; }
+
+  @media (max-width: 500px) {
+    header h1 { font-size: 26px; }
+    .tiers { grid-template-columns: 1fr; }
+    .content { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BECOME A SPONSOR</h1>
+  <div class="subtitle">Game Hubs by Elvic Groups</div>
+</header>
+
+<div class="content">
+  <a class="back-link" id="backLink" href="index.html">&larr; Back to Game Hubs</a>
+
+  <!-- WHO WE ARE -->
+  <h2>Who We Are</h2>
+  <div class="about-box">
+    <p><strong>Elvic Groups</strong> is an indie game studio building fun, lightweight browser games distributed as Chrome extensions. Our <strong>Game Hubs</strong> extension gives users instant access to a growing collection of classic arcade games — all free, no downloads, no sign-ups.</p>
+    <p>Our audience is engaged gamers who play during breaks, commutes, and downtime. They see your brand every time they open a game — that's high-frequency, high-attention exposure.</p>
+  </div>
+
+  <!-- AUDIENCE -->
+  <h2>Our Audience</h2>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="number">3</div>
+      <div class="label">Games Available</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">100%</div>
+      <div class="label">Free to Play</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">Global</div>
+      <div class="label">Audience Reach</div>
+    </div>
+  </div>
+  <p>Our users are casual gamers, students, professionals, and tech-savvy Chrome users who actively engage with our games multiple times per week.</p>
+
+  <!-- WHERE ADS APPEAR -->
+  <h2>Where Your Brand Appears</h2>
+  <div class="placement">
+    <div class="placement-item">
+      <div class="placement-icon">&#9632;</div>
+      <div class="placement-text">
+        <strong>Hub Page Banner</strong>
+        <span>Top-level ad banner on the main Game Hubs page. Seen every time a user opens the hub or switches between games.</span>
+      </div>
+    </div>
+    <div class="placement-item">
+      <div class="placement-icon">&#9632;</div>
+      <div class="placement-text">
+        <strong>In-Game Result Screens</strong>
+        <span>Non-intrusive banner shown between rounds — on game over, win, and draw screens across all games. High visibility without disrupting gameplay.</span>
+      </div>
+    </div>
+    <div class="placement-item">
+      <div class="placement-icon">&#9632;</div>
+      <div class="placement-text">
+        <strong>"Powered By" Sponsor Banner</strong>
+        <span>Your brand name and link featured prominently at the bottom of the hub page as the official sponsor of Game Hubs.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <h2>Sponsorship Plans</h2>
+  <p>Simple, transparent pricing. No hidden fees. Cancel anytime.</p>
+
+  <div class="tiers">
+    <div class="tier">
+      <div class="tier-name">Starter</div>
+      <div class="tier-price">$10 <span>/ month</span></div>
+      <div class="tier-duration">Billed monthly</div>
+      <ul>
+        <li>Hub page banner ad</li>
+        <li>Your brand name + link</li>
+        <li>1 month placement</li>
+        <li>Cancel anytime</li>
+      </ul>
+      <a class="tier-btn" href="https://ko-fi.com/elvicgroups/tiers" target="_blank" rel="noopener">Subscribe — $10/mo</a>
+    </div>
+
+    <div class="tier popular">
+      <div class="tier-name">Growth</div>
+      <div class="tier-price">$25 <span>/ month</span></div>
+      <div class="tier-duration">Billed monthly</div>
+      <ul>
+        <li>Hub page banner ad</li>
+        <li>All in-game result screen ads</li>
+        <li>"Powered By" sponsor banner</li>
+        <li>Your brand name + link</li>
+        <li>Priority placement</li>
+        <li>Cancel anytime</li>
+      </ul>
+      <a class="tier-btn" href="https://ko-fi.com/elvicgroups/tiers" target="_blank" rel="noopener">Subscribe — $25/mo</a>
+    </div>
+
+    <div class="tier">
+      <div class="tier-name">Premium</div>
+      <div class="tier-price">$50 <span>/ month</span></div>
+      <div class="tier-duration">Billed monthly — 3 month minimum</div>
+      <ul>
+        <li>Everything in Growth</li>
+        <li>Exclusive sponsor (no other ads)</li>
+        <li>Custom branded theme color</li>
+        <li>Logo placement on hub page</li>
+        <li>Mentioned in extension description</li>
+      </ul>
+      <a class="tier-btn" href="https://ko-fi.com/elvicgroups/tiers" target="_blank" rel="noopener">Subscribe — $50/mo</a>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <h2>How It Works</h2>
+  <div class="about-box">
+    <p><strong>1. Choose your plan</strong> — Pick the sponsorship tier that fits your budget and goals.</p>
+    <p><strong>2. Subscribe on Ko-fi</strong> — Click the subscribe button on your chosen plan. Payment is handled securely through Ko-fi's membership system — automatic monthly billing, no hassle.</p>
+    <p><strong>3. Email us your details</strong> — After subscribing, send us your brand name, website URL, and any logo or tagline to <strong style="color:#e94560;">elvickongolo@gmail.com</strong>.</p>
+    <p><strong>4. We set it up</strong> — Your ad goes live within 24 hours across all placements included in your plan.</p>
+    <p><strong>5. Stay visible</strong> — Your brand stays up for as long as your subscription is active. We push updates to all users automatically through the Chrome Web Store. Ko-fi handles billing — you don't need to do anything each month.</p>
+  </div>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-item">
+    <strong>How long will my ad be displayed?</strong>
+    <p>Your ad stays live for as long as your sponsorship is active. Starter and Growth plans are month-to-month with no commitment. Premium requires a 3-month minimum.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>Can I change my ad content?</strong>
+    <p>Yes. You can update your brand name, link, or tagline once per month at no extra cost. Just email us the changes.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>How do I pay?</strong>
+    <p>All payments are handled through Ko-fi Memberships. Click the "Subscribe" button on your chosen plan — Ko-fi handles secure payment processing and automatic monthly billing. You can pay with credit card or PayPal through Ko-fi.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>Can I cancel?</strong>
+    <p>Starter and Growth plans can be cancelled anytime directly from your Ko-fi account — your ad runs until the end of the paid period. Premium has a 3-month minimum after which you can cancel from Ko-fi.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>What happens after I subscribe?</strong>
+    <p>After subscribing on Ko-fi, email us at elvickongolo@gmail.com with your brand name, website, and any logo or tagline. We'll set up your ad within 24 hours and confirm by email when it's live.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>Will more games be added?</strong>
+    <p>Yes! We're actively building new games. More games = more visibility for your brand at no extra cost.</p>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h2>Ready to Get Started?</h2>
+    <p>Get your brand in front of engaged gamers today.</p>
+    <a class="btn" href="https://ko-fi.com/elvicgroups/tiers" target="_blank" rel="noopener">View Plans on Ko-fi</a>
+    <p style="color:#666; font-size:12px; margin-top:12px;">After subscribing, email your brand details to:</p>
+    <div class="email-display">elvickongolo@gmail.com</div>
+    <a class="btn secondary" href="https://mail.google.com/mail/?view=cm&to=elvickongolo@gmail.com&su=Sponsorship+-+Brand+Details&body=Hi+Elvic+Groups,%0A%0AI've+subscribed+to+the+[Starter+/+Growth+/+Premium]+plan+on+Ko-fi.%0A%0ABrand+Name:+%0AWebsite:+%0ATagline+(optional):+%0ALogo+URL+(optional):+%0A%0AThanks!" target="_blank" rel="noopener">Send Brand Details</a>
+  </div>
+</div>
+
+<footer>
+  <div class="copyright">Elvic Groups</div>
+  <div class="rights">All rights reserved.</div>
+</footer>
+
+<script src="sponsor.js"></script>
+</body>
+</html>
