@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Game Hubs",
-  "description": "A collection of classic arcade games — Snake, Tic-Tac-Toe, Ping Pong — by Elvic Groups",
+  "description": "A collection of 8 classic arcade games: Snake, Tic-Tac-Toe, Ping Pong, Tetris, Breakout, Flappy Bird, 2048, and Minesweeper.",
   "version": "1.0",
   "action": {
     "default_popup": "popup.html",
